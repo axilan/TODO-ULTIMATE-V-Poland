@@ -20,7 +20,7 @@ void SavingTaskList(); //Subfunction that saving changes in task file;
 public:
 //Mainpart(int = 0, bool = false, string = "Null", string = "Missing", string="Missing"); // There is a issue that I cant fix UwU
 void CreatingTask(); //Creating new record in memory with task;
-int ShowingTaskList(); //Printing a list of task from file; For the sake of Finish it's also returning size of table;,
+void ShowingTaskList(); //Printing a list of task from file; For the sake of Finish it's also returning size of table;,
 void FinishingTask(); //Function that allowing to finish task, and to delete it from file;
 };
 

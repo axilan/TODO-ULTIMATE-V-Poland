@@ -31,11 +31,12 @@ Xul.open("Xul.txt", ios::out | ios::app);
 }
 
 /*-_-_-_-_-_-_-_-_- Showing Task List -_-_-_-_-_-_-_-_-*/
-int Mainpart::ShowingTaskList()
+void Mainpart::ShowingTaskList()
 {
     int SizeOfTable = 0;
-    int FirstForint = 0;
-    int LineOfTask = 0;
+    int FirstForint = 0; 
+    int LineOfTask = 0; // used in switch in line 53
+    char yes; // used to define answer in line 116
     fstream Tasklist;
     Tasklist.close(); // It was usefull while I was working on this code, so I will leave it here;
     Tasklist.open("Xul.txt", ios::in | ios::app);
@@ -51,25 +52,31 @@ int Mainpart::ShowingTaskList()
         xdon[FirstForint] = line;
         switch (LineOfTask)
         {
-        case 0: {cout << "| Done: | " << xdon[FirstForint] << " "; break; }
+        case 0: {
+            cout << (FirstForint/3)+1 << ". \t| Is done: | ";
+            if (xdon[FirstForint] == "0") { cout << "No"; }
+            else cout << "Yes";
+            cout << " "; break; }
         case 1: {cout << "| Priority: | " << xdon[FirstForint] << " "; break; }
-        case 2: {cout << "| Done: | " << xdon[FirstForint] << " |" << endl; break; }
-        default: {cout << "Welp, thats some error :D"; break; }
+        case 2: {cout << "| Task: | " << xdon[FirstForint] << " |" << endl; break; }
+        default: {cout << "Welp, that's some error :D"; break; }
         }
 
         FirstForint++; LineOfTask++;
         if (LineOfTask >= 3) LineOfTask = 0;
     }
 
-    return SizeOfTable;
+    delete[] xdon;
 }
 
 /*-_-_-_-_-_-_-_-_- Finishing Task -_-_-_-_-_-_-_-_-*/
 void Mainpart::FinishingTask()
 {
-    int withToFinish;
-    int SizeOfTable = ShowingTaskList();
-    int FirstForint = 0;
+    int withToFinish = 0;
+    int SizeOfTable = 0;
+    int FirstForint = 0;// used in switch in line 53
+    int show = 0;
+    char yes;
     int LineOfTask = 0;
 
     fstream Tasklist;
@@ -81,42 +88,45 @@ void Mainpart::FinishingTask()
 
     Tasklist.close(); // It was usefull while I was working on this code, so I will leave it here;
     Tasklist.open("Xul.txt", ios::in | ios::app);
-
+    Start:
     while (getline(Tasklist, line))
     {
         xdon[FirstForint] = line;
         switch (LineOfTask)
         {
-        case 0: {cout << "| Done: | " << xdon[FirstForint] << " "; break; }
+        case 0: {
+            cout << (FirstForint / 3) + 1 << ". \t| Is done: | ";
+            if (xdon[FirstForint] == "0") { cout << "No"; }
+            else cout << "Yes";
+            cout << " "; break; }
         case 1: {cout << "| Priority: | " << xdon[FirstForint] << " "; break; }
-        case 2: {cout << "| Done: | " << xdon[FirstForint] << " |" << endl; break; }
-        default: {cout << "Welp, thats some error :D"; break; }
+        case 2: {cout << "| Task: | " << xdon[FirstForint] << " |" << endl; break; }
+        default: {cout << "Welp, that's some error :D"; break; }
         }
 
         FirstForint++; LineOfTask++;
         if (LineOfTask >= 3) LineOfTask = 0;
-        Tasklist.close();
-
     }
 
-    cout << "What task you finish? "; cin >> withToFinish; cout << endl;
+    cout << "What task you finish? "; cin >> show; withToFinish=(show-1)*3; cout << endl;
     if (withToFinish <= SizeOfTable)
     {
-        {
-            cout << "| " << withToFinish << ". | Priority: " << xdon[withToFinish    + 1] << " | " << " | Text: " << xdon[withToFinish + 2] << " | " << endl;
-            cout << "It is this Task you finish? (1.Yes / 2.No) "; int yes; cin >> yes;
+        {   ERR0: // Used when user put wrong char in line 116 -> case: Default;
+            cout << "| " << show << ". | Priority: " << xdon[withToFinish+1] << " | " << " | Text: " << xdon[withToFinish+2] << " | " << endl;
+            cout << "Is it Task that you want to finish? (1.Yes / 2.No) "; 
+            cin >> yes;
 
             switch (yes)
             {
-            case 1:
+            case '1':
             {
-                xdon[withToFinish - 1] = true;
-                cout << "| " << xdon[withToFinish - 1] << " | " << withToFinish << ". | Priority: " << xdon[withToFinish] << " | " << " | Text: " << xdon[withToFinish + 1] << " | " << endl;
+                xdon[withToFinish] = true;
+                cout << "| " << show << ". | Priority: " << xdon[withToFinish + 1] << " | " << " | Text: " << xdon[withToFinish + 2] << " | " << endl;
                 MP.SavingTaskList();
                 break;
             }
-            case 2: exit(0); break;
-            default: cout << "Wybierz '1' aby potwierdzic lub '2' aby wybrac ponownie"; break;
+            case '2': goto Start; break;
+            default: cout << "Choose '1' to confirm or '2' for different task"; goto ERR0; break;
             }
         }
 
